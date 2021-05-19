@@ -5,8 +5,7 @@ import { AuthContext } from "./Auth-Provider";
 const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
   const { currentUser } = useContext(AuthContext);
 
-  if (!currentUser) 
-  <Redirect to="/login" />;
+  if (!currentUser) return <Redirect to="/login" />;
   return <Route {...rest} component={RouteComponent} />;
 };
 
