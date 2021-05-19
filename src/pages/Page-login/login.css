@@ -1,0 +1,51 @@
+.logincamp {
+  height: 80vh;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-style: none;
+}
+.card-login {
+  text-align: center;
+  margin-top: 16%;
+  margin-left: 25%;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  padding: 1.5rem;
+  border-radius: 30px;
+  border-style: inset;
+  padding-top: 2%;
+  background-color: rgb(255, 255, 255);
+  font-size: 15px;
+  letter-spacing: 1px;
+  border-style: none;
+}
+.btn-login-LOGIN {
+  width: 100%;
+  border-radius: 15px;
+  background-color: #c93b59;
+  font-size: 15px;
+}
+.input-login {
+  border-radius: 10px;
+  width: 100%;
+  background-color: rgb(241, 241, 241);
+  border-style: none;
+}
+.btn-login-CADASTRAR {
+  padding: 0, 5rem;
+  border-radius: 10px;
+  font-size: 12px;
+  margin: 3px;
+  width: 48%;
+  letter-spacing: 1px;
+}
+.btn-login-RECUPERAR {
+  padding: 0, 5rem;
+  border-radius: 10px;
+  font-size: 12px;
+  margin: 3px;
+  width: 48%;
+  letter-spacing: 1px;
+}
