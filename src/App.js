@@ -16,10 +16,10 @@ function App() {
         <Router>
           <Switch>  
             <Route exact path="/login" component={Login} />
-            <PrivateRoute exact path="/home" component={Home} />
+            <Route exact path="/home" component={Home} />
             <Route exact path="/cadastrar" component={Cadastro} />
-            <PrivateRoute exact path="/dados" component={Dados} />
-            <PrivateRoute exact path="/localização" component={Local} />
+            <Route exact path="/dados" component={Dados} />
+            <Route exact path="/localização" component={Local} />
             <Route exact path="*" component={() => "404 NOT FOUND"} />
           </Switch>
         </Router>

@@ -1,20 +1,30 @@
-import React, { useEffect, useState, createContext } from "react";
-import { app } from "./Config-fire";
+import React, { useState, createContext, useEffect } from "react";
+import jwt from "jsonwebtoken";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState();
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    app.auth().onAuthStateChanged(setCurrentUser);
+    const token = sessionStorage.getItem("token");
+
+    if (token) {
+      try {
+        jwt.decode(token, { headers: true });
+        return setAuthenticated(true);
+      } catch (err) {
+        sessionStorage.removeItem("token");
+        return setAuthenticated(false);
+      }
+    }
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        currentUser,
-        setCurrentUser,
+        authenticated,
+        setAuthenticated,
       }}
     >
       {children}

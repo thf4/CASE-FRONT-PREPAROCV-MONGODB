@@ -1,5 +1,6 @@
-import React, { useCallback, useContext } from "react";
-import { Redirect, withRouter } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { withRouter, useHistory } from "react-router-dom";
+import axios from "../../Config/axios";
 import {
   Form,
   Input,
@@ -11,42 +12,40 @@ import {
   Row,
   Button,
 } from "reactstrap";
-import { AuthContext } from "../../Auth/Auth-Provider";
-import { app } from "../../Auth/Config-fire";
 import "./login.css";
 import { Menu } from "../../components/Menu/Menu";
+import { api } from "../../Config/host";
+import { AuthContext } from "../../Auth/Auth-Provider";
+const Login = () => {
+  const history = useHistory();
+  const [error, setError] = useState("");
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
 
-const Login = ({ history }) => {
-  const loginUser = useCallback(
-    async (e) => {
-      e.preventDefault();
-      const { email, password } = e.target.elements;
-      try {
-        await app
-          .auth()
-          .signInWithEmailAndPassword(email.value, password.value);
+  const { authenticated } = useContext(AuthContext);
 
-        history.push("/dados");
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [history]
-  );
-
-  const { currentUser } = useContext(AuthContext);
-  if (currentUser) {
-    <Redirect to={"/dados"} />;
-  }
+  const handleSubmit = async (e) => {
+    try {
+      const response = await axios.post(api + "/login", data);
+      sessionStorage.setItem("token", JSON.stringify(response.data.token));
+      history.push("/home");
+      return response;
+    } catch (err) {
+      setError(" Usuário não cadastrado");
+      console.log(err);
+    }
+  };
 
   return (
     <div>
       <Menu />
-
+      <>{JSON.stringify(authenticated)}</>
       <div className="logincamp">
         <Container>
           <Card className="card-login">
-            <Form onSubmit={loginUser} className="card-body">
+            <Form onSubmit={handleSubmit} className="card-body">
               <Label>LOGIN</Label>
               <FormGroup>
                 <Row>
@@ -58,6 +57,10 @@ const Login = ({ history }) => {
                       placeholder="EMAIL"
                       bsSize="xs"
                       className="mt-2 input-login"
+                      value={data.email}
+                      onChange={(e) =>
+                        setData({ ...data, email: e.target.value })
+                      }
                     />
                   </Col>
                 </Row>
@@ -72,6 +75,10 @@ const Login = ({ history }) => {
                       placeholder="SENHA"
                       bsSize="xs"
                       className="mt-4 input-login"
+                      value={data.password}
+                      onChange={(e) =>
+                        setData({ ...data, password: e.target.value })
+                      }
                     />
                   </Col>
                 </Row>

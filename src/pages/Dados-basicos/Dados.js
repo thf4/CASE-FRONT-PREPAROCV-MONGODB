@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { withRouter, useHistory } from "react-router";
 import {
   Form,
   Input,
@@ -13,49 +14,45 @@ import {
   Col,
   Alert,
 } from "reactstrap";
+
+import axios from "../../Config/axios";
+import { api } from "../../Config/host";
 import { Menu } from "../../components/Menu-User/User-Menu";
 import Footer from "../../components/Footer/Footer";
-import { app } from "../../Auth/Config-fire";
 
 const Dados = (props) => {
-  const [user, setUser] = useState({
+  const history = useHistory;
+  const [error, setError] = useState("");
+  const [data, setData] = useState({
     name: "",
     surname: "",
+    email: "",
+    behance: "",
+    github: "",
+    linkedin: "",
     telephone: "",
     image: "",
-    github: "",
-    behance: "",
-    linkedin: "",
   });
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const editSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = app.database().ref("Users").child("data");
-      response.add({
-          name: user.name,
-          surname: user.surname,
-          telephone: user.telephone,
-          image: user.image,
-          github: user.github,
-          behance: user.behance,
-          linkedin: user.linkedin,
-        });
+      const response = await axios.put(api + "/user/:_id", data);
       setError("Atualizado com sucesso!");
-      return;
+      history.push("/home");
+      return response;
     } catch (err) {
-      return setError("Não foi possivel atualizar!");
+      setError("Erro ao atualizar cadastro!");
     }
   };
-
   return (
     <div>
       <Menu />
       <Container className="pt-4">
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={editSubmit}>
           <Card>
-            {error && <Alert color="success">{error}</Alert>}
+            {error && <Alert>{error}</Alert>}
             <CardBody>
               <CardTitle>
                 <h4>Foto de perfil</h4>
@@ -65,8 +62,8 @@ const Dados = (props) => {
                 <Label className="">Carregar</Label>
                 <Input
                   type="file"
-                  value={user.image}
-                  onChange={(e) => setUser({ ...user, image: e.target.value })}
+                  value={data.image}
+                  onChange={(e) => setData({ ...data, image: e.target.value })}
                 />
               </Form>
             </CardBody>
@@ -87,9 +84,9 @@ const Dados = (props) => {
                   <Input
                     id="emailex"
                     type="email"
-                    value={user.email}
+                    value={data.email}
                     onChange={(e) =>
-                      setUser({ ...user, email: e.target.value })
+                      setData({ ...data, email: e.target.value })
                     }
                   />
                 </Col>
@@ -111,38 +108,38 @@ const Dados = (props) => {
                 </CardSubtitle>
               </div>
               <FormGroup row>
-                <Label for="emailex">Nome</Label>
+                <Label for="name">Nome</Label>
                 <Col sm={4}>
                   <Input
-                    id="emailex"
+                    id="name"
                     type="text"
-                    value={user.name}
-                    onChange={(e) => setUser({ ...user, name: e.target.value })}
+                    value={data.name}
+                    onChange={(e) => setData({ ...data, name: e.target.value })}
                   />
                 </Col>
               </FormGroup>
               <FormGroup row>
-                <Label for="emailex">Sobrenome</Label>
+                <Label for="surname">Sobrenome</Label>
                 <Col sm={4}>
                   <Input
-                    id="emailex"
+                    id="surname"
                     type="text"
-                    value={user.surname}
+                    value={data.surname}
                     onChange={(e) =>
-                      setUser({ ...user, surname: e.target.value })
+                      setData({ ...data, surname: e.target.value })
                     }
                   />
                 </Col>
               </FormGroup>
               <FormGroup row>
-                <Label for="emailex">Telefone</Label>
+                <Label for="telephone">Telefone</Label>
                 <Col sm={4}>
                   <Input
-                    id="emailex"
+                    id="telephone"
                     type="text"
-                    value={user.telephone}
+                    value={data.telephone}
                     onChange={(e) =>
-                      setUser({ ...user, telephone: e.target.value })
+                      setData({ ...data, telephone: e.target.value })
                     }
                   />
                 </Col>
@@ -166,9 +163,9 @@ const Dados = (props) => {
                   <Input
                     id="Github"
                     type="text"
-                    value={user.github}
+                    value={data.github}
                     onChange={(e) =>
-                      setUser({ ...user, github: e.target.value })
+                      setData({ ...data, github: e.target.value })
                     }
                   />
                 </Col>
@@ -179,9 +176,9 @@ const Dados = (props) => {
                   <Input
                     id="Behance"
                     type="text"
-                    value={user.behance}
+                    value={data.behance}
                     onChange={(e) =>
-                      setUser({ ...user, behance: e.target.value })
+                      setData({ ...data, behance: e.target.value })
                     }
                   />
                 </Col>
@@ -192,9 +189,9 @@ const Dados = (props) => {
                   <Input
                     id="linkedin"
                     type="text"
-                    value={user.linkedin}
+                    value={data.linkedin}
                     onChange={(e) =>
-                      setUser({ ...user, linkedin: e.target.value })
+                      setData({ ...data, linkedin: e.target.value })
                     }
                   />
                 </Col>
@@ -209,4 +206,4 @@ const Dados = (props) => {
   );
 };
 
-export default Dados;
+export default withRouter(Dados);

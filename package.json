@@ -5,9 +5,11 @@
   "dependencies": {
     "@firebase/firestore": "^2.3.0",
     "@react-firebase/database": "^0.3.11",
+    "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
     "firebase": "^8.6.1",
     "firestore": "^1.1.6",
+    "jsonwebtoken": "^8.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",

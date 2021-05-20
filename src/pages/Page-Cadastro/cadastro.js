@@ -1,4 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
+import { useHistory } from "react-router";
+import axios from "axios";
 import {
   Form,
   Input,
@@ -13,29 +15,32 @@ import {
 } from "reactstrap";
 import "./cadastro.css";
 import { withRouter } from "react-router-dom";
-import { app } from "../../Auth/Config-fire";
+
+import { api } from "../../Config/host";
 import { Menu } from "../../components/Menu/Menu";
 
-const Cadastro = ({ history }) => {
+const Cadastro = () => {
   const [error, setError] = useState("");
+  const history = useHistory();
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+    password2: "",
+  });
 
-  const cadastroUser = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      const { email, password } = e.target;
-      try {
-        await app
-          .auth()
-          .createUserWithEmailAndPassword(email.value, password.value);
-        setError("Success");
-        history.push("/login");
-      } catch (err) {
-        setError("Error to create");
-      }
-    },
-    [history]
-  );
+  const cadUser = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    try {
+      const response = await axios.post(api + "/cadastrar", user, { headers });
+      setError("Success Create!");
+      history.push("/login");
+      return response;
+    } catch (err) {
+      setError("Created fail!");
+    }
+  };
 
   return (
     <div>
@@ -44,7 +49,7 @@ const Cadastro = ({ history }) => {
         <div className="cadastar-camp">
           <Card className="card-cadastro">
             {error && <Alert color="danger">{error} </Alert>}
-            <Form onSubmit={cadastroUser} className="card-body">
+            <Form onSubmit={cadUser} className="card-body">
               <Label className="mt-4">CADASTRO DO CANDIDATO </Label>
               <FormGroup>
                 <Row>
@@ -55,6 +60,25 @@ const Cadastro = ({ history }) => {
                       id="email"
                       placeholder="E-MAIL"
                       className=" input-Cadastrar"
+                      onChange={(e) => {
+                        setUser({ ...user, email: e.target.value });
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </FormGroup>
+              <FormGroup>
+                <Row>
+                  <Col sm={12}>
+                    <Input
+                      type="password"
+                      name="password"
+                      id="password"
+                      placeholder="SENHA"
+                      className="input-Cadastrar"
+                      onChange={(e) => {
+                        setUser({ ...user, password: e.target.value });
+                      }}
                     />
                   </Col>
                 </Row>
@@ -66,8 +90,11 @@ const Cadastro = ({ history }) => {
                       type="password"
                       name="password"
                       id="password2"
-                      placeholder="SENHA"
+                      placeholder="CONFIRME SUA SENHA"
                       className="input-Cadastrar"
+                      onChange={(e) => {
+                        setUser({ ...user, password2: e.target.value });
+                      }}
                     />
                   </Col>
                 </Row>

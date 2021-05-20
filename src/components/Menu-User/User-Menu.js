@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import {
   Collapse,
   Navbar,
@@ -7,11 +8,17 @@ import {
   Nav,
   NavItem,
   NavLink,
+  DropdownToggle,
+  UncontrolledDropdown,
+  DropdownItem,
+  DropdownMenu,
 } from "reactstrap";
-import "../Menu/menu.css";
+import "./Menu-User.css";
+
 export const Menu = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
+  const history = useHistory();
 
   return (
     <div className="containerNavbar">
@@ -39,6 +46,33 @@ export const Menu = (props) => {
               <NavLink className="navmenu">
                 <strong>INSCRIÇÕES</strong>
               </NavLink>
+            </NavItem>
+            <NavItem>
+              <div className="toogle-nav">
+                <NavLink>
+                  <UncontrolledDropdown setActiveFromChild>
+                    <DropdownToggle className="nav-link" caret>
+                      p
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <DropdownItem
+                        onClick={() => {
+                          sessionStorage.clear("token");
+                        }}
+                        active
+                      >
+                        Logout
+                      </DropdownItem>
+                      <DropdownItem href="/localização" active>
+                        Localização
+                      </DropdownItem>
+                      <DropdownItem href="/dados" active>
+                        Dados
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                </NavLink>
+              </div>
             </NavItem>
           </Nav>
         </Collapse>
