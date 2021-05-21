@@ -1,8 +1,12 @@
 import axios from "axios";
-axios.defaults.headers = {
-  "Content-Type": "application/json",
 
-  Authorization: "Beader " + sessionStorage.getItem("token"),
-};
+function Axios() {
+  axios.defaults.headers = {
+    "Content-Type": "application/json",
 
-export default axios;
+    Authorization: "Beader " + sessionStorage.getItem("token"),
+  };
+  return axios;
+}
+
+export default Axios;

@@ -1,24 +1,9 @@
-import React, { useState, createContext, useEffect } from "react";
-import jwt from "jsonwebtoken";
+import React, { useState, createContext } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (token) {
-      try {
-        jwt.decode(token, { headers: true });
-        return setAuthenticated(true);
-      } catch (err) {
-        sessionStorage.removeItem("token");
-        return setAuthenticated(false);
-      }
-    }
-  }, []);
+  const [authenticated, setAuthenticated] = useState(null);
 
   return (
     <AuthContext.Provider

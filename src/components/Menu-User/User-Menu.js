@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router";
 import {
   Collapse,
@@ -15,11 +15,14 @@ import {
 } from "reactstrap";
 import "./Menu-User.css";
 
+import { AuthContext } from "../../Auth/Auth-Provider";
+
 export const Menu = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const history = useHistory();
 
+  const { authenticated } = useContext(AuthContext);
   return (
     <div className="containerNavbar">
       <Navbar className="navmenu" light expand="md">
@@ -56,18 +59,26 @@ export const Menu = (props) => {
                     </DropdownToggle>
                     <DropdownMenu>
                       <DropdownItem
-                        onClick={() => {
+                        onClick={(e) => {
                           sessionStorage.clear("token");
+                          history.push("/login");
                         }}
-                        active
                       >
                         Logout
                       </DropdownItem>
-                      <DropdownItem href="/localização" active>
-                        Localização
-                      </DropdownItem>
-                      <DropdownItem href="/dados" active>
+                      <DropdownItem
+                        onClick={(e) => {
+                          history.push(`/dados/${authenticated._id}`);
+                        }}
+                      >
                         Dados
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={(e) => {
+                          history.push(`/localização/${authenticated._id}`);
+                        }}
+                      >
+                        Localização
                       </DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>

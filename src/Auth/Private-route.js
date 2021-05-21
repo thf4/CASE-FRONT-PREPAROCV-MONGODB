@@ -1,15 +1,27 @@
-import React, { useContext } from "react";
-import { Route, Redirect } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Route, useHistory } from "react-router-dom";
 import { AuthContext } from "./Auth-Provider";
+import jwt from "jsonwebtoken";
 
 const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
-  const { authenticated } = useContext(AuthContext);
+  const { setAuthenticated } = useContext(AuthContext);
+  const history = useHistory();
 
-  if (!authenticated) {
-    return <Redirect to="/login" />;
-  } else {
-    return <Route {...rest} component={RouteComponent} />;
-  }
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      try {
+        const userData = jwt.decode(token, { headers: true });
+        setAuthenticated(userData);
+      } catch (err) {
+        sessionStorage.removeItem("token");
+        setAuthenticated(null);
+        history.push("/login");
+      }
+    }
+  }, [setAuthenticated, history]);
+
+  return <Route {...rest} component={RouteComponent} />;
 };
 
 export default PrivateRoute;

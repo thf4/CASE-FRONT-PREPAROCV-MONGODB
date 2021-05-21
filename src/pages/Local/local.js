@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "react-router";
 import {
   Col,
   Button,
@@ -15,11 +16,13 @@ import "./local.css";
 
 import { Menu } from "../../components/Menu-User/User-Menu";
 import Footer from "../../components/Footer/Footer";
-import axios from "../../Config/axios";
+import Axios from "../../Config/axios";
 import { api } from "../../Config/host";
 
 const Local = (props) => {
+  const params = useParams();
   const [error, setErros] = useState("");
+  const [success, setSuccess] = useState("");
   const [data, setData] = useState({
     zip: "",
     state: "",
@@ -34,8 +37,9 @@ const Local = (props) => {
     e.preventDefault();
 
     try {
-      const response = await axios.put(api + "/user/local", data);
-      setErros("Atualizado com sucesso!");
+      const { _id } = params;
+      const response = await Axios().put(`${api}/user/local/${_id}`, data);
+      setSuccess("Atualizado com sucesso!");
       return response;
     } catch (err) {
       setErros("Erro ao atualizar dados!");
@@ -44,7 +48,8 @@ const Local = (props) => {
   return (
     <div className="local-div">
       <Menu />
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert color="danger">{error}</Alert>}
+      {success && <Alert>{success}</Alert>}
       <h6>Localização</h6>
       <Container>
         <Form onSubmit={localSubmit}>

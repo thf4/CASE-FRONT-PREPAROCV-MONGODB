@@ -5,7 +5,6 @@ import Login from "./pages/Page-login/login";
 import Cadastro from "./pages/Page-Cadastro/cadastro";
 import { AuthProvider } from "./Auth/Auth-Provider";
 import PrivateRoute from "./Auth/Private-route";
-import Home from "./pages/Home/Home";
 import Dados from "./pages/Dados-basicos/Dados";
 import Local from "./pages/Local/local";
 
@@ -14,12 +13,11 @@ function App() {
     <div>
       <AuthProvider>
         <Router>
-          <Switch>  
+          <Switch>
             <Route exact path="/login" component={Login} />
-            <Route exact path="/home" component={Home} />
             <Route exact path="/cadastrar" component={Cadastro} />
-            <Route exact path="/dados" component={Dados} />
-            <Route exact path="/localização" component={Local} />
+            <PrivateRoute exact path="/dados/:_id" component={Dados} />
+            <PrivateRoute exact path="/localização/:_id" component={Local} />
             <Route exact path="*" component={() => "404 NOT FOUND"} />
           </Switch>
         </Router>

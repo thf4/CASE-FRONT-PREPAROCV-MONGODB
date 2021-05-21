@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { withRouter, useHistory } from "react-router";
+import React, { useState, useContext } from "react";
+import { withRouter, useParams } from "react-router";
 import {
   Form,
   Input,
@@ -15,18 +15,20 @@ import {
   Alert,
 } from "reactstrap";
 
-import axios from "../../Config/axios";
+import Axios from "../../Config/axios";
 import { api } from "../../Config/host";
 import { Menu } from "../../components/Menu-User/User-Menu";
 import Footer from "../../components/Footer/Footer";
+import { AuthContext } from "../../Auth/Auth-Provider";
 
 const Dados = (props) => {
-  const history = useHistory;
+  const { authenticated } = useContext(AuthContext);
+  const params = useParams();
   const [error, setError] = useState("");
   const [data, setData] = useState({
     name: "",
     surname: "",
-    email: "",
+    email: authenticated.email || "",
     behance: "",
     github: "",
     linkedin: "",
@@ -38,9 +40,9 @@ const Dados = (props) => {
     e.preventDefault();
 
     try {
-      const response = await axios.put(api + "/user/:_id", data);
+      const { _id } = params;
+      const response = await Axios().put(`${api}/user/${_id}`, data);
       setError("Atualizado com sucesso!");
-      history.push("/home");
       return response;
     } catch (err) {
       setError("Erro ao atualizar cadastro!");
@@ -84,16 +86,13 @@ const Dados = (props) => {
                   <Input
                     id="emailex"
                     type="email"
-                    value={data.email}
+                    value={authenticated.email || data.email}
                     onChange={(e) =>
                       setData({ ...data, email: e.target.value })
                     }
                   />
                 </Col>
               </FormGroup>
-              <Button className="mt-2" color="primary">
-                Atualizar
-              </Button>
             </CardBody>
           </Card>
           <Card>

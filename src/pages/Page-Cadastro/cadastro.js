@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import axios from "axios";
+import Axios from "axios";
 import {
   Form,
   Input,
@@ -20,7 +20,8 @@ import { api } from "../../Config/host";
 import { Menu } from "../../components/Menu/Menu";
 
 const Cadastro = () => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState("");
   const history = useHistory();
   const [user, setUser] = useState({
     email: "",
@@ -28,17 +29,16 @@ const Cadastro = () => {
     password2: "",
   });
 
-  const cadUser = async () => {
-    const headers = {
-      "Content-Type": "application/json",
-    };
+  const cadUser = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(api + "/cadastrar", user, { headers });
-      setError("Success Create!");
+      const response = await Axios().post(api + "/cadastrar", user);
+      setSuccess("Cadastrado com sucesso!");
       history.push("/login");
       return response;
     } catch (err) {
-      setError("Created fail!");
+      const rest = err.response.data.message;
+      setError(rest);
     }
   };
 
@@ -49,6 +49,7 @@ const Cadastro = () => {
         <div className="cadastar-camp">
           <Card className="card-cadastro">
             {error && <Alert color="danger">{error} </Alert>}
+            {success && <Alert color="success">{success} </Alert>}
             <Form onSubmit={cadUser} className="card-body">
               <Label className="mt-4">CADASTRO DO CANDIDATO </Label>
               <FormGroup>

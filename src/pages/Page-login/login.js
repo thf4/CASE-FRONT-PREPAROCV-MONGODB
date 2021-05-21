@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
+import jwt from "jsonwebtoken";
 import { withRouter, useHistory } from "react-router-dom";
-import axios from "../../Config/axios";
+import Axios from "../../Config/axios";
 import {
   Form,
   Input,
@@ -11,40 +12,46 @@ import {
   Card,
   Row,
   Button,
+  Alert,
 } from "reactstrap";
 import "./login.css";
+
 import { Menu } from "../../components/Menu/Menu";
 import { api } from "../../Config/host";
 import { AuthContext } from "../../Auth/Auth-Provider";
+
 const Login = () => {
   const history = useHistory();
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [data, setData] = useState({
     email: "",
     password: "",
   });
 
-  const { authenticated } = useContext(AuthContext);
+  const { setAuthenticated } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(api + "/login", data);
-      sessionStorage.setItem("token", JSON.stringify(response.data.token));
-      history.push("/home");
-      return response;
+      const response = await Axios().post(api + "/login", data);
+      sessionStorage.setItem("token", response.data.token);
+      const token = jwt.decode(response.data.token);
+      setAuthenticated(true);
+      history.push(`/localização/${token._id}`);
     } catch (err) {
-      setError(" Usuário não cadastrado");
-      console.log(err);
+      const rest = err.response.data.message;
+      setAuthenticated(false);
+      setError(rest);
     }
   };
 
   return (
     <div>
       <Menu />
-      <>{JSON.stringify(authenticated)}</>
       <div className="logincamp">
         <Container>
           <Card className="card-login">
+            {error && <Alert color="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit} className="card-body">
               <Label>LOGIN</Label>
               <FormGroup>
