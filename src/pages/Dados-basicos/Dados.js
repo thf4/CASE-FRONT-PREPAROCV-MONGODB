@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { withRouter, useParams } from "react-router";
 import {
   Form,
@@ -28,13 +28,48 @@ const Dados = (props) => {
   const [data, setData] = useState({
     name: "",
     surname: "",
-    email: authenticated.email || "",
+    email: "",
     behance: "",
     github: "",
     linkedin: "",
     telephone: "",
     image: "",
   });
+
+  const arrayBufferToBase64 = (buffer) => {
+    const binary = "";
+    const bytes = [].slice.call(new Uint8Array(buffer));
+    bytes.forEach((b) => (binary += String.fromCharCode(b)));
+    return window.btoa(binary);
+  };
+
+  const getBase64 = (file) => {
+    return new Promise((resolve) => {
+      let baseURL = "";
+
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        baseURL = reader.result;
+        resolve(baseURL);
+      };
+    });
+  };
+
+  const onFileInputChange = (e) => {
+    const file = e.target.files[0];
+
+    getBase64(file)
+      .then((result) => {
+        setData({
+          ...data,
+          image: result,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const editSubmit = async (e) => {
     e.preventDefault();
@@ -48,6 +83,37 @@ const Dados = (props) => {
       setError("Erro ao atualizar cadastro!");
     }
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const { _id } = params;
+        const { data } = await Axios().get(`${api}/user/${_id}`);
+        const { name, surname, email, behance, github, linkedin, telephone } = data;
+        
+        setData({
+          name,
+          surname,
+          email,
+          behance,
+          github,
+          linkedin,
+          telephone,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    setData({
+      ...data,
+      email: (authenticated && authenticated.email) || "",
+    });
+  }, [authenticated]);
+
   return (
     <div>
       <Menu />
@@ -60,14 +126,21 @@ const Dados = (props) => {
                 <h4>Foto de perfil</h4>
               </CardTitle>
               <CardSubtitle>Adicione uma foto em seu perfil</CardSubtitle>
-              <Form className="mt-3 col-md d-flex flex-column align-items-left justify-content-center">
+              <div className="mt-3 col-md d-flex flex-column align-items-left justify-content-center">
                 <Label className="">Carregar</Label>
                 <Input
                   type="file"
-                  value={data.image}
-                  onChange={(e) => setData({ ...data, image: e.target.value })}
+                  accept="image/*"
+                  onChange={onFileInputChange}
                 />
-              </Form>
+                {data.image && (
+                  <img
+                    alt="img"
+                    style={{ width: 150, marginLeft: 0 }}
+                    src={data.image}
+                  />
+                )}
+              </div>
             </CardBody>
           </Card>
           <Card>
@@ -86,7 +159,7 @@ const Dados = (props) => {
                   <Input
                     id="emailex"
                     type="email"
-                    value={authenticated.email || data.email}
+                    value={(authenticated && authenticated.email) || data.email}
                     onChange={(e) =>
                       setData({ ...data, email: e.target.value })
                     }

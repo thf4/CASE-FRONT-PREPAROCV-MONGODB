@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import {
   Col,
@@ -45,6 +45,29 @@ const Local = (props) => {
       setErros("Erro ao atualizar dados!");
     }
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const { _id } = params;
+        const { data } = await Axios().get(`${api}/user/local/${_id}`);
+        const { statee, zip, district, address, city, complement } = data;
+
+        setData({
+          statee,
+          zip,
+          district,
+          address,
+          city,
+          complement,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    loadData();
+  }, []);
+
   return (
     <div className="local-div">
       <Menu />
@@ -75,10 +98,10 @@ const Local = (props) => {
                       }
                     />
                   </Col>
-                  <Label for="cep">Cidade٭</Label>
+                  <Label for="cidade">Cidade٭</Label>
                   <Col sm={5}>
                     <Input
-                      id="cep"
+                      id="cidade"
                       type="text"
                       value={data.city}
                       onChange={(e) =>
@@ -86,11 +109,11 @@ const Local = (props) => {
                       }
                     />
                   </Col>
-                  <Label for="exampleSelect">Estado٭</Label>
+                  <Label for="estado">Estado٭</Label>
                   <Col sm={5}>
                     <Input
                       type="select"
-                      name="select"
+                      name="estado"
                       id="exampleSelect"
                       value={data.statee}
                       onChange={(e) =>

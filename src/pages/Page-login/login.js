@@ -39,9 +39,18 @@ const Login = () => {
       setAuthenticated(true);
       history.push(`/localização/${token._id}`);
     } catch (err) {
-      const rest = err.response.data.message;
-      setAuthenticated(false);
-      setError(rest);
+      if (
+        err &&
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
+        const rest = err.response.data.message;
+        setAuthenticated(false);
+        setError(rest);
+      } else {
+        setError("Erro inesperado!");
+      }
     }
   };
 
